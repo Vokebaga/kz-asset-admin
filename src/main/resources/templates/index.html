@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Login Successful</title>
+</head>
+<body>
+<h1>Login Successful!</h1>
+
+<a href="/file">Go to File List</a>
+
+<!-- Logout Button -->
+<form th:action="@{/logout}" method="post">
+  <button type="submit">Logout</button>
+</form>
+</body>
+</html>

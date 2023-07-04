@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>File Upload</title>
+  <style>
+    .edit-fields {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<h1>File Upload</h1>
+
+<!-- File Upload Form -->
+<form action="/upload" enctype="multipart/form-data" method="post">
+  <input type="file" name="file" required>
+  <br><br>
+  <label for="region">Region:</label>
+  <input type="number" name="region" id="region" required>
+  <br><br>
+  <label for="youtubeLink">YouTube Video Link:</label>
+  <input type="text" name="youtubeLink" id="youtubeLink" required>
+  <br><br>
+  <label for="date">Date:</label>
+  <input type="date" name="date" id="date" required>
+  <br><br>
+  <label for="numAssignments">Number of Assignments:</label>
+  <input type="number" name="numAssignments" id="numAssignments" required>
+  <br><br>
+  <button type="submit">Upload</button>
+</form>
+
+<!-- File List -->
+<h2>Uploaded Files:</h2>
+<table>
+  <thead>
+  <tr>
+    <th>File Name</th>
+    <th>File Size</th>
+    <th>Region</th>
+    <th>YouTube Link</th>
+    <th>Date</th>
+    <th>Number of Assignments</th>
+    <th>Edit</th>
+    <th>Delete</th>
+    <th>Download</th>
+  </tr>
+  </thead>
+  <tbody>
+  <!-- Iterate over the list of files -->
+  <tr th:each="file : ${files}">
+    <td th:text="${file.fileName}"></td>
+    <td th:text="${#numbers.formatDecimal(file.data.length/1024,1,2)} + ' KB'"></td>
+    <td th:text="${file.region}"></td>
+    <td th:text="${file.date}"></td>
+    <td th:text="${file.numAssignments}"></td>
+    <td><a th:href="${file.youtubeLink}">Link</a></td>
+    <td><a th:href="@{/update/{id}(id=${file.id})}">Edit</a></td>
+    <td><a th:href="@{/delete/{id}(id=${file.id})}">Delete</a></td>
+    <td><a th:href="@{/download/{id}(id=${file.id})}">Download</a></td>
+  </tr>
+  </tbody>
+</table>
+
+<script>
+  function showEditFields() {
+    var editFields = document.getElementsByClassName("edit-fields");
+    for (var i = 0; i < editFields.length; i++) {
+      editFields[i].style.display = "inline";
+    }
+  }
+</script>
+</body>
+</html>
