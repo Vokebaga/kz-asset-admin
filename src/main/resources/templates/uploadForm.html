@@ -1,12 +1,16 @@
+<!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
+<head>
+  <link rel="stylesheet" th:href="@{/css/style.css}" /> <!-- You can add custom CSS styles -->
+</head>
 <body>
 
 <div th:if="${message}">
-  <h2 th:text="${message}"/>
+  <p th:text="${message}"></p>
 </div>
 
 <div>
-  <form method="POST" enctype="multipart/form-data" action="/">
+  <form method="POST" enctype="multipart/form-data" th:action="@{/file/}">
     <table>
       <tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
       <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
@@ -17,7 +21,7 @@
 <div>
   <ul>
     <li th:each="file : ${files}">
-      <a th:href="${file}" th:text="${file}" />
+      <a th:href="${file}" th:text="${file}" class="file-link"></a>
     </li>
   </ul>
 </div>
