@@ -2,6 +2,7 @@ package com.example.demo3.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class WebController {
@@ -12,7 +13,7 @@ public class WebController {
     }
     @GetMapping("/file")
     public String secureFileList() {
-        return "upload"; // returns the login page (login.html or login.jsp, depending on your setup)
+        return "uploadForm"; // returns the login page (login.html or login.jsp, depending on your setup)
     }
     @GetMapping("/")
     public String home() {
