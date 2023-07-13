@@ -1,33 +1,31 @@
 package com.example.demo3.controller;
 
 import com.example.demo3.model.FileEntity;
-import com.example.demo3.repository.FileRepository;
+import com.example.demo3.service.interfaces.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class FileController {
 
-    private final FileRepository fileRepository;
+    private final FileService fileService;
 
     @Autowired
-    public FileController(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
     }
 
     @GetMapping("/upload")
     public String showUploadForm(Model model) {
-        List<FileEntity> files = fileRepository.findAll();
+        List<FileEntity> files = fileService.getAllFiles();
         model.addAttribute("files", files);
         return "upload";
     }
@@ -38,31 +36,40 @@ public class FileController {
                                    @RequestParam("youtubeLink") String youtubeLink,
                                    @RequestParam("date") String date,
                                    @RequestParam("numAssignments") int numAssignments) throws IOException {
-        if (!file.isEmpty()) {
-            byte[] bytes = file.getBytes();
-            String fileName = file.getOriginalFilename();
-            FileEntity fileEntity = new FileEntity();
-            fileEntity.setFileName(fileName);
-            fileEntity.setData(bytes);
-            fileEntity.setRegion(String.valueOf(region));
-            fileEntity.setYoutubeLink(youtubeLink);
-            fileEntity.setDate(LocalDate.parse(date));
-            fileEntity.setNumAssignments(numAssignments);
-            fileRepository.save(fileEntity);
-        }
+        fileService.uploadFile(file, region, youtubeLink, date, numAssignments);
         return "redirect:/upload";
+    }
+
+    @GetMapping("/delete/{id}")
+    public String deleteFile(@PathVariable("id") Long id) {
+        fileService.deleteFile(id);
+        return "redirect:/upload";
+    }
+
+    @GetMapping("/download/{id}")
+    public void downloadFile(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
+        fileService.downloadFile(id, response);
     }
 
     @GetMapping("/update/{id}")
     public String showUpdateForm(@PathVariable("id") Long id, Model model) {
-        Optional<FileEntity> optionalFileEntity = fileRepository.findById(id);
-        if (optionalFileEntity.isPresent()) {
-            FileEntity fileEntity = optionalFileEntity.get();
-            model.addAttribute("file", fileEntity);
-            return "update";
-        } else {
-            return "redirect:/upload";
+        Optional<FileEntity> fileEntityOptional = fileService.getFileById(id);
+        if (fileEntityOptional.isPresent()) {
+            FileEntity fileEntity = fileEntityOptional.get();
+            model.addAttribute("fileEntity", fileEntity);
         }
+        return "update";
+    }
+
+    @PutMapping("/update/{id}")
+    public String updateFile(@PathVariable("id") Long id,
+                             @RequestParam("file") MultipartFile file,
+                             @RequestParam("region") int region,
+                             @RequestParam("youtubeLink") String youtubeLink,
+                             @RequestParam("date") String date,
+                             @RequestParam("numAssignments") int numAssignments) throws IOException {
+        fileService.updateFile(id, file, region, youtubeLink, date, numAssignments);
+        return "redirect:/upload";
     }
 
     @PostMapping("/update/{id}")
@@ -72,36 +79,9 @@ public class FileController {
                                    @RequestParam("youtubeLink") String youtubeLink,
                                    @RequestParam("date") String date,
                                    @RequestParam("numAssignments") int numAssignments) throws IOException {
-        Optional<FileEntity> optionalFileEntity = fileRepository.findById(id);
-        if (optionalFileEntity.isPresent() && !file.isEmpty()) {
-            FileEntity fileEntity = optionalFileEntity.get();
-            byte[] bytes = file.getBytes();
-            String fileName = file.getOriginalFilename();
-            fileEntity.setFileName(fileName);
-            fileEntity.setData(bytes);
-            fileEntity.setRegion(String.valueOf(region));
-            fileEntity.setYoutubeLink(youtubeLink);
-            fileEntity.setDate(LocalDate.parse(date));
-            fileEntity.setNumAssignments(numAssignments);
-            fileRepository.save(fileEntity);
-        }
+        fileService.updateFile(id, file, region, youtubeLink, date, numAssignments);
         return "redirect:/upload";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteFile(@PathVariable("id") Long id) {
-        fileRepository.deleteById(id);
-        return "redirect:/upload";
-    }
 
-    @GetMapping("/download/{id}")
-    public void downloadFile(@PathVariable("id") Long id, HttpServletResponse response) throws IOException {
-        Optional<FileEntity> optionalFileEntity = fileRepository.findById(id);
-        if (optionalFileEntity.isPresent()) {
-            FileEntity fileEntity = optionalFileEntity.get();
-            response.setContentType("application/octet-stream");
-            response.setHeader("Content-Disposition", "attachment; filename=\"" + fileEntity.getFileName() + "\"");
-            FileCopyUtils.copy(fileEntity.getData(), response.getOutputStream());
-        }
-    }
 }

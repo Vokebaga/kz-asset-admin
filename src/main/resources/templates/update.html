@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Update File</title>
+  <style>
+    .edit-fields {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<h2>Update File</h2>
+<form th:if="${fileEntity != null}" th:action="@{/update/{id}(id=${fileEntity.id})}" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+  <input type="hidden" name="_method" value="put" />
+  <input type="file" name="file" required>
+  <br><br>
+  <label for="region">Region:</label>
+  <select name="region" id="region" required>
+    <option value="1" th:selected="${fileEntity.region == 1}">Алатауский район</option>
+    <option value="2" th:selected="${fileEntity.region == 2}">Алмалинский район</option>
+    <option value="3" th:selected="${fileEntity.region == 3}">Ауэзовский район</option>
+    <option value="4" th:selected="${fileEntity.region == 4}">Бостандыкский район</option>
+    <option value="5" th:selected="${fileEntity.region == 5}">Жетысуский район</option>
+    <option value="6" th:selected="${fileEntity.region == 6}">Медеуский район</option>
+    <option value="7" th:selected="${fileEntity.region == 7}">Наурызбайский район</option>
+    <option value="8" th:selected="${fileEntity.region == 8}">Турксибский район</option>
+  </select>
+  <br><br>
+  <label for="youtubeLink">YouTube Video Link:</label>
+  <input type="text" name="youtubeLink" id="youtubeLink" value="${fileEntity.youtubeLink}" required>
+  <br>
+  <small id="youtubeLinkError" style="color: red; display: none;">Please enter a valid YouTube link.</small>
+  <br><br>
+  <label for="date">Date:</label>
+  <input type="date" name="date" id="date" value="${fileEntity.date}" required>
+  <br><br>
+  <label for="numAssignments">Number of Assignments:</label>
+  <input type="number" name="numAssignments" id="numAssignments" value="${fileEntity.numAssignments}" required>
+  <br>
+  <small id="numAssignmentsError" style="color: red; display: none;">Number of Assignments must be a non-negative value.</small>
+  <br><br>
+  <input type="submit" value="Update" />
+</form>
+<p th:unless="${fileEntity != null}">File not found</p>
+
+<script>
+  function validateForm() {
+    var youtubeLink = document.getElementById("youtubeLink").value;
+    var youtubeLinkError = document.getElementById("youtubeLinkError");
+
+    // Regular expression pattern for validating YouTube links
+    var youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}$/;
+
+    var numAssignments = parseInt(document.getElementById("numAssignments").value);
+    var numAssignmentsError = document.getElementById("numAssignmentsError");
+
+    if (!youtubeLink.match(youtubeRegex)) {
+      youtubeLinkError.style.display = "block";
+      return false;
+    } else {
+      youtubeLinkError.style.display = "none";
+    }
+
+    if (numAssignments < 0) {
+      numAssignmentsError.style.display = "block";
+      return false;
+    } else {
+      numAssignmentsError.style.display = "none";
+    }
+
+    return true;
+  }
+</script>
+</body>
+</html>

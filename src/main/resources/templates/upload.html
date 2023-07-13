@@ -13,20 +13,33 @@
 <h1>File Upload</h1>
 
 <!-- File Upload Form -->
-<form action="/upload" enctype="multipart/form-data" method="post">
+<form action="/upload" enctype="multipart/form-data" method="post" onsubmit="return validateForm()">
   <input type="file" name="file" required>
   <br><br>
   <label for="region">Region:</label>
-  <input type="number" name="region" id="region" required>
+  <select name="region" id="region" required>
+    <option value="1">Алатауский район</option>
+    <option value="2">Алмалинский район</option>
+    <option value="3">Ауэзовский район</option>
+    <option value="4">Бостандыкский район</option>
+    <option value="5">Жетысуский район</option>
+    <option value="6">Медеуский район</option>
+    <option value="7">Наурызбайский район</option>
+    <option value="8">Турксибский район</option>
+  </select>
   <br><br>
   <label for="youtubeLink">YouTube Video Link:</label>
   <input type="text" name="youtubeLink" id="youtubeLink" required>
+  <br>
+  <small id="youtubeLinkError" style="color: red; display: none;">Please enter a valid YouTube link.</small>
   <br><br>
   <label for="date">Date:</label>
   <input type="date" name="date" id="date" required>
   <br><br>
   <label for="numAssignments">Number of Assignments:</label>
   <input type="number" name="numAssignments" id="numAssignments" required>
+  <br>
+  <small id="numAssignmentsError" style="color: red; display: none;">Number of Assignments must be a non-negative value.</small>
   <br><br>
   <button type="submit">Upload</button>
 </form>
@@ -64,11 +77,31 @@
 </table>
 
 <script>
-  function showEditFields() {
-    var editFields = document.getElementsByClassName("edit-fields");
-    for (var i = 0; i < editFields.length; i++) {
-      editFields[i].style.display = "inline";
+  function validateForm() {
+    var youtubeLink = document.getElementById("youtubeLink").value;
+    var youtubeLinkError = document.getElementById("youtubeLinkError");
+
+    // Regular expression pattern for validating YouTube links
+    var youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}$/;
+
+    var numAssignments = parseInt(document.getElementById("numAssignments").value);
+    var numAssignmentsError = document.getElementById("numAssignmentsError");
+
+    if (!youtubeLink.match(youtubeRegex)) {
+      youtubeLinkError.style.display = "block";
+      return false;
+    } else {
+      youtubeLinkError.style.display = "none";
     }
+
+    if (numAssignments < 0) {
+      numAssignmentsError.style.display = "block";
+      return false;
+    } else {
+      numAssignmentsError.style.display = "none";
+    }
+
+    return true;
   }
 </script>
 </body>
