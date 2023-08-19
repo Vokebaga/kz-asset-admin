@@ -19,6 +19,6 @@ public interface FileService {
 
     void downloadFile(Long id, HttpServletResponse response) throws IOException;
 
-    void updateFile(Long id, MultipartFile file, int region, String youtubeLink, String date, int numAssignments);
+    void updateFile(Long id, int region, String youtubeLink, String date, int numAssignments);
 
 }

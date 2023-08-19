@@ -74,21 +74,29 @@ public class FileServiceImpl implements FileService {
         }
     }
     @Override
-    public void updateFile(Long id, MultipartFile file, int region, String youtubeLink, String date, int numAssignments) {
-        // Retrieve the existing file entity
+    public void updateFile(Long id, int region, String youtubeLink, String date, int numAssignments) {
         Optional<FileEntity> optionalFileEntity = fileRepository.findById(id);
         if (optionalFileEntity.isPresent()) {
             FileEntity existingFileEntity = optionalFileEntity.get();
 
-            // Update the file entity properties
-            existingFileEntity.setRegion(String.valueOf(region));
-            existingFileEntity.setYoutubeLink(youtubeLink);
-            existingFileEntity.setDate(LocalDate.parse(date));
-            existingFileEntity.setNumAssignments(numAssignments);
+            // Update the file entity properties if the fields are not empty
+            if (region != 0) {
+                existingFileEntity.setRegion(String.valueOf(region));
+            }
+            if (!youtubeLink.isEmpty()) {
+                existingFileEntity.setYoutubeLink(youtubeLink);
+            }
+            if (!date.isEmpty()) {
+                existingFileEntity.setDate(LocalDate.parse(date));
+            }
+            if (numAssignments != 0) {
+                existingFileEntity.setNumAssignments(numAssignments);
+            }
 
             // Save the updated file entity
             fileRepository.save(existingFileEntity);
         }
     }
+
 
 }

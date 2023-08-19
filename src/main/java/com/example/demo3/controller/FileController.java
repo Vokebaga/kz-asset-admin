@@ -61,25 +61,13 @@ public class FileController {
         return "update";
     }
 
-    @PutMapping("/update/{id}")
-    public String updateFile(@PathVariable("id") Long id,
-                             @RequestParam("file") MultipartFile file,
-                             @RequestParam("region") int region,
-                             @RequestParam("youtubeLink") String youtubeLink,
-                             @RequestParam("date") String date,
-                             @RequestParam("numAssignments") int numAssignments) throws IOException {
-        fileService.updateFile(id, file, region, youtubeLink, date, numAssignments);
-        return "redirect:/upload";
-    }
-
     @PostMapping("/update/{id}")
-    public String handleFileUpdate(@PathVariable("id") Long id,
-                                   @RequestParam("file") MultipartFile file,
+    public String handleUpdateFile(@PathVariable("id") Long id,
                                    @RequestParam("region") int region,
                                    @RequestParam("youtubeLink") String youtubeLink,
                                    @RequestParam("date") String date,
-                                   @RequestParam("numAssignments") int numAssignments) throws IOException {
-        fileService.updateFile(id, file, region, youtubeLink, date, numAssignments);
+                                   @RequestParam("numAssignments") int numAssignments) {
+        fileService.updateFile(id, region, youtubeLink, date, numAssignments);
         return "redirect:/upload";
     }
 
